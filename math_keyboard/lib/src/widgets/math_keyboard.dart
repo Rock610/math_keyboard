@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:math_keyboard/src/custom_key_icons/custom_key_icons.dart';
 import 'package:math_keyboard/src/foundation/keyboard_button.dart';
+import 'package:math_keyboard/src/foundation/keyboard_decoration.dart';
 import 'package:math_keyboard/src/widgets/decimal_separator.dart';
 import 'package:math_keyboard/src/widgets/keyboard_button.dart';
 import 'package:math_keyboard/src/widgets/math_field.dart';
@@ -34,6 +35,7 @@ class MathKeyboard extends StatelessWidget {
     this.onSubmit,
     this.insetsState,
     this.slideAnimation,
+    this.decoration = const KeyboardDecoration(),
   }) : super(key: key);
 
   /// The controller for editing the math field.
@@ -62,6 +64,9 @@ class MathKeyboard extends StatelessWidget {
   /// Can be `null`.
   final VoidCallback? onSubmit;
 
+  /// keyboard decoration
+  final KeyboardDecoration decoration;
+
   @override
   Widget build(BuildContext context) {
     final curvedSlideAnimation = CurvedAnimation(
@@ -83,13 +88,12 @@ class MathKeyboard extends StatelessWidget {
             child: Material(
               type: MaterialType.transparency,
               child: ColoredBox(
-                color: Colors.black,
+                color: decoration.backgroundColor,
                 child: SafeArea(
                   top: false,
                   child: _KeyboardBody(
                     insetsState: insetsState,
-                    slideAnimation:
-                        slideAnimation == null ? null : curvedSlideAnimation,
+                    slideAnimation: slideAnimation == null ? null : curvedSlideAnimation,
                     child: Padding(
                       padding: const EdgeInsets.only(
                         bottom: 4,
@@ -114,12 +118,8 @@ class MathKeyboard extends StatelessWidget {
                                 ),
                                 child: _Buttons(
                                   controller: controller,
-                                  page1: type == MathKeyboardType.numberOnly
-                                      ? numberKeyboard
-                                      : standardKeyboard,
-                                  page2: type == MathKeyboardType.numberOnly
-                                      ? null
-                                      : functionKeyboard,
+                                  page1: type == MathKeyboardType.numberOnly ? numberKeyboard : standardKeyboard,
+                                  page2: type == MathKeyboardType.numberOnly ? null : functionKeyboard,
                                   onSubmit: onSubmit,
                                 ),
                               ),
@@ -210,8 +210,7 @@ class _KeyboardBodyState extends State<_KeyboardBody> {
       if (!mounted) return;
 
       final renderBox = context.findRenderObject() as RenderBox;
-      insetsState[ObjectKey(this)] =
-          renderBox.size.height * (widget.slideAnimation?.value ?? 1);
+      insetsState[ObjectKey(this)] = renderBox.size.height * (widget.slideAnimation?.value ?? 1);
     });
   }
 
@@ -307,8 +306,7 @@ class _Buttons extends StatelessWidget {
       child: AnimatedBuilder(
         animation: controller,
         builder: (context, child) {
-          final layout =
-              controller.secondPage ? page2! : page1 ?? numberKeyboard;
+          final layout = controller.secondPage ? page2! : page1 ?? numberKeyboard;
           return Column(
             children: [
               for (final row in layout)
@@ -322,50 +320,54 @@ class _Buttons extends StatelessWidget {
                             flex: config.flex,
                             label: config.label,
                             onTap: config.args != null
-                                ? () => controller.addFunction(
-                                      config.value,
-                                      config.args!,
-                                    )
+                                ? () =>
+                                controller.addFunction(
+                                  config.value,
+                                  config.args!,
+                                )
                                 : () => controller.addLeaf(config.value),
                             asTex: config.asTex,
                             highlightLevel: config.highlighted ? 1 : 0,
                           )
-                        else if (config is DeleteButtonConfig)
-                          _NavigationButton(
-                            flex: config.flex,
-                            icon: Icons.backspace,
-                            iconSize: 22,
-                            onTap: () => controller.goBack(deleteMode: true),
-                          )
-                        else if (config is PageButtonConfig)
-                          _BasicButton(
-                            flex: config.flex,
-                            icon: controller.secondPage
-                                ? null
-                                : CustomKeyIcons.key_symbols,
-                            label: controller.secondPage ? '123' : null,
-                            onTap: controller.togglePage,
-                            highlightLevel: 1,
-                          )
-                        else if (config is PreviousButtonConfig)
-                          _NavigationButton(
-                            flex: config.flex,
-                            icon: Icons.chevron_left_rounded,
-                            onTap: controller.goBack,
-                          )
-                        else if (config is NextButtonConfig)
-                          _NavigationButton(
-                            flex: config.flex,
-                            icon: Icons.chevron_right_rounded,
-                            onTap: controller.goNext,
-                          )
-                        else if (config is SubmitButtonConfig)
-                          _BasicButton(
-                            flex: config.flex,
-                            icon: Icons.keyboard_return,
-                            onTap: onSubmit,
-                            highlightLevel: 2,
-                          ),
+                        else
+                          if (config is DeleteButtonConfig)
+                            _NavigationButton(
+                              flex: config.flex,
+                              icon: Icons.backspace,
+                              iconSize: 22,
+                              onTap: () => controller.goBack(deleteMode: true),
+                            )
+                          else
+                            if (config is PageButtonConfig)
+                              _BasicButton(
+                                flex: config.flex,
+                                icon: controller.secondPage ? null : CustomKeyIcons.key_symbols,
+                                label: controller.secondPage ? '123' : null,
+                                onTap: controller.togglePage,
+                                highlightLevel: 1,
+                              )
+                            else
+                              if (config is PreviousButtonConfig)
+                                _NavigationButton(
+                                  flex: config.flex,
+                                  icon: Icons.chevron_left_rounded,
+                                  onTap: controller.goBack,
+                                )
+                              else
+                                if (config is NextButtonConfig)
+                                  _NavigationButton(
+                                    flex: config.flex,
+                                    icon: Icons.chevron_right_rounded,
+                                    onTap: controller.goNext,
+                                  )
+                                else
+                                  if (config is SubmitButtonConfig)
+                                    _BasicButton(
+                                      flex: config.flex,
+                                      icon: Icons.keyboard_return,
+                                      onTap: onSubmit,
+                                      highlightLevel: 2,
+                                    ),
                     ],
                   ),
                 ),
@@ -388,7 +390,8 @@ class _BasicButton extends StatelessWidget {
     this.onTap,
     this.asTex = false,
     this.highlightLevel = 0,
-  })  : assert(label != null || icon != null),
+  })
+      : assert(label != null || icon != null),
         super(key: key);
 
   /// The flexible flex value.
@@ -445,10 +448,13 @@ class _BasicButton extends StatelessWidget {
     result = KeyboardButton(
       onTap: onTap,
       color: highlightLevel > 1
-          ? Theme.of(context).colorScheme.secondary
+          ? Theme
+          .of(context)
+          .colorScheme
+          .secondary
           : highlightLevel == 1
-              ? Colors.grey[900]
-              : null,
+          ? Colors.grey[900]
+          : null,
       child: result,
     );
 

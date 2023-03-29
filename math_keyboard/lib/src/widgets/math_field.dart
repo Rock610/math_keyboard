@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:math_keyboard/src/foundation/keyboard_button.dart';
+import 'package:math_keyboard/src/foundation/keyboard_decoration.dart';
 import 'package:math_keyboard/src/foundation/math2tex.dart';
 import 'package:math_keyboard/src/foundation/node.dart';
 import 'package:math_keyboard/src/widgets/decimal_separator.dart';
@@ -24,6 +25,7 @@ class MathField extends StatefulWidget {
     this.keyboardType = MathKeyboardType.expression,
     this.variables = const ['x'],
     this.decoration = const InputDecoration(),
+    this.keyboardDecoration = const KeyboardDecoration(),
     this.onChanged,
     this.onSubmitted,
   }) : super(key: key);
@@ -54,6 +56,9 @@ class MathField extends StatefulWidget {
 
   /// The decoration to show around the math field.
   final InputDecoration decoration;
+
+  /// The decoration to keyboard
+  final KeyboardDecoration keyboardDecoration;
 
   /// Function that is called when the expression inside of the math field
   /// changes,
@@ -313,6 +318,7 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
           child: MathKeyboard(
             controller: _controller,
             type: widget.keyboardType,
+            decoration: widget.keyboardDecoration,
             variables: _variables,
             onSubmit: _submit,
             // Note that we need to pass the insets state like this because the
