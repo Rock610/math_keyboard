@@ -8,6 +8,8 @@ class KeyboardDecoration {
   final Color functionButtonColor;
   final Color basicButtonColor;
   final Color basicButtonHightLightColor;
+  final Color submitButtonColor;
+  final Color submitButtonTextColor;
 
   /// themes
   const KeyboardDecoration(
@@ -16,6 +18,8 @@ class KeyboardDecoration {
       this.functionButtonColor = Colors.transparent,
       this.basicButtonTextColor = Colors.black,
       this.functionButtonTextColor = Colors.black,
-      this.basicButtonHightLightColor = Colors.transparent})
+      this.basicButtonHightLightColor = Colors.transparent,
+      this.submitButtonColor = const Color(0xFFE00051),
+      this.submitButtonTextColor = Colors.white})
       : super();
 }

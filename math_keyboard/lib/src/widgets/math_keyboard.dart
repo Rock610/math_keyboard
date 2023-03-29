@@ -363,11 +363,11 @@ class _Buttons extends StatelessWidget {
                             decoration: decoration,
                           )
                         else if (config is SubmitButtonConfig)
-                          _BasicButton(
+                          _SubmitButton(
                             flex: config.flex,
                             icon: Icons.keyboard_return,
                             onTap: onSubmit,
-                            highlightLevel: 0,
+                            highlightLevel: 1,
                             decoration: decoration,
                           ),
                     ],
@@ -420,14 +420,14 @@ class _BasicButton extends ThemedButton {
     if (label == null) {
       result = Icon(
         icon,
-        color: decoration.basicButtonTextColor,
+        color: getIconColor(),
       );
     } else if (asTex) {
       result = Math.tex(
         label!,
         options: MathOptions(
           fontSize: 22,
-          color: decoration.basicButtonTextColor,
+          color: getIconColor(),
         ),
       );
     } else {
@@ -442,18 +442,14 @@ class _BasicButton extends ThemedButton {
         symbol!,
         style: TextStyle(
           fontSize: 22,
-          color: decoration.basicButtonTextColor,
+          color: getIconColor(),
         ),
       );
     }
 
     result = KeyboardButton(
       onTap: onTap,
-      color: highlightLevel > 1
-          ? Theme.of(context).colorScheme.secondary
-          : highlightLevel == 1
-              ? decoration.basicButtonHightLightColor
-              : decoration.basicButtonColor,
+      color: getKeyboardButtonColor(context),
       child: result,
     );
 
@@ -461,6 +457,41 @@ class _BasicButton extends ThemedButton {
       flex: flex ?? 2,
       child: result,
     );
+  }
+
+  Color getIconColor() => decoration.basicButtonTextColor;
+
+  Color getKeyboardButtonColor(BuildContext context) {
+    return highlightLevel > 1
+        ? Theme.of(context).colorScheme.secondary
+        : highlightLevel == 1
+            ? decoration.basicButtonHightLightColor
+            : decoration.basicButtonColor;
+  }
+}
+
+class _SubmitButton extends _BasicButton {
+  _SubmitButton(
+      {required super.flex,
+      super.label,
+      super.icon,
+      super.onTap,
+      super.asTex = false,
+      super.highlightLevel = 0,
+      super.decoration});
+
+  @override
+  Color getIconColor() {
+    return decoration.submitButtonTextColor;
+  }
+
+  @override
+  Color getKeyboardButtonColor(BuildContext context) {
+    return highlightLevel > 1
+        ? Theme.of(context).colorScheme.secondary
+        : highlightLevel == 1
+            ? decoration.submitButtonColor
+            : decoration.basicButtonColor;
   }
 }
 
