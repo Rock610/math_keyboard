@@ -102,14 +102,14 @@ const _decimalButton = BasicKeyboardButtonConfig(
   label: '.',
   value: '.',
   keyboardCharacters: ['.', ','],
-  highlighted: true,
+  highlighted: false,
 );
 
 const _subtractButton = BasicKeyboardButtonConfig(
   label: '−',
   value: '-',
   keyboardCharacters: ['-'],
-  highlighted: true,
+  highlighted: false,
 );
 
 /// Keyboard showing extended functionality.

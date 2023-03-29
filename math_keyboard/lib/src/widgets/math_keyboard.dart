@@ -122,6 +122,7 @@ class MathKeyboard extends StatelessWidget {
                                   page1: type == MathKeyboardType.numberOnly ? numberKeyboard : standardKeyboard,
                                   page2: type == MathKeyboardType.numberOnly ? null : functionKeyboard,
                                   onSubmit: onSubmit,
+                                  decoration: decoration,
                                 ),
                               ),
                             ],
@@ -225,12 +226,7 @@ class _KeyboardBodyState extends State<_KeyboardBody> {
 /// Widget showing the variables a user can use.
 class _Variables extends ThemedButton {
   /// Constructs a [_Variables] Widget.
-  const _Variables({
-    Key? key,
-    required this.controller,
-    required this.variables,
-    super.decoration
-  }) : super(key: key);
+  const _Variables({Key? key, required this.controller, required this.variables, super.decoration}) : super(key: key);
 
   /// The editing controller for the math field that the variables are connected
   /// to.
@@ -371,7 +367,7 @@ class _Buttons extends StatelessWidget {
                             flex: config.flex,
                             icon: Icons.keyboard_return,
                             onTap: onSubmit,
-                            highlightLevel: 2,
+                            highlightLevel: 0,
                             decoration: decoration,
                           ),
                     ],
@@ -388,16 +384,16 @@ class _Buttons extends StatelessWidget {
 /// Widget displaying a single keyboard button.
 class _BasicButton extends ThemedButton {
   /// Constructs a [_BasicButton].
-  const _BasicButton({
-    Key? key,
-    required this.flex,
-    this.label,
-    this.icon,
-    this.onTap,
-    this.asTex = false,
-    this.highlightLevel = 0,
-    super.decoration
-  })  : assert(label != null || icon != null),
+  const _BasicButton(
+      {Key? key,
+      required this.flex,
+      this.label,
+      this.icon,
+      this.onTap,
+      this.asTex = false,
+      this.highlightLevel = 0,
+      super.decoration})
+      : assert(label != null || icon != null),
         super(key: key);
 
   /// The flexible flex value.
@@ -456,8 +452,8 @@ class _BasicButton extends ThemedButton {
       color: highlightLevel > 1
           ? Theme.of(context).colorScheme.secondary
           : highlightLevel == 1
-              ? decoration.basicButtonColor
-              : null,
+              ? decoration.basicButtonHightLightColor
+              : decoration.basicButtonColor,
       child: result,
     );
 
@@ -471,14 +467,8 @@ class _BasicButton extends ThemedButton {
 /// Keyboard button for navigation actions.
 class _NavigationButton extends ThemedButton {
   /// Constructs a [_NavigationButton].
-  const _NavigationButton({
-    Key? key,
-    required this.flex,
-    this.icon,
-    this.iconSize = 36,
-    this.onTap,
-    super.decoration
-  }) : super(key: key);
+  const _NavigationButton({Key? key, required this.flex, this.icon, this.iconSize = 36, this.onTap, super.decoration})
+      : super(key: key);
 
   /// The flexible flex value.
   final int? flex;

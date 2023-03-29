@@ -7,13 +7,15 @@ class KeyboardDecoration {
   final Color functionButtonTextColor;
   final Color functionButtonColor;
   final Color basicButtonColor;
+  final Color basicButtonHightLightColor;
 
   /// themes
   const KeyboardDecoration(
-      {this.backgroundColor = Colors.black,
-      this.basicButtonColor = Colors.black,
-      this.functionButtonColor = const Color(0xFF212121),
-      this.basicButtonTextColor = Colors.white,
-      this.functionButtonTextColor = Colors.white})
+      {this.backgroundColor = Colors.white,
+      this.basicButtonColor = Colors.transparent,
+      this.functionButtonColor = Colors.transparent,
+      this.basicButtonTextColor = Colors.black,
+      this.functionButtonTextColor = Colors.black,
+      this.basicButtonHightLightColor = Colors.transparent})
       : super();
 }
