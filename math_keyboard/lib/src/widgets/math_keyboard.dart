@@ -3,9 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:math_keyboard/src/custom_key_icons/custom_key_icons.dart';
 import 'package:math_keyboard/src/foundation/keyboard_button.dart';
-import 'package:math_keyboard/src/foundation/keyboard_decoration.dart';
 import 'package:math_keyboard/src/widgets/decimal_separator.dart';
 import 'package:math_keyboard/src/widgets/keyboard_button.dart';
+import 'package:math_keyboard/src/widgets/keyboard_decoration.dart';
 import 'package:math_keyboard/src/widgets/math_field.dart';
 import 'package:math_keyboard/src/widgets/view_insets.dart';
 
@@ -111,6 +111,7 @@ class MathKeyboard extends StatelessWidget {
                                 _Variables(
                                   controller: controller,
                                   variables: variables,
+                                  decoration: decoration,
                                 ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -222,12 +223,13 @@ class _KeyboardBodyState extends State<_KeyboardBody> {
 }
 
 /// Widget showing the variables a user can use.
-class _Variables extends StatelessWidget {
+class _Variables extends ThemedButton {
   /// Constructs a [_Variables] Widget.
   const _Variables({
     Key? key,
     required this.controller,
     required this.variables,
+    super.decoration
   }) : super(key: key);
 
   /// The editing controller for the math field that the variables are connected
@@ -282,6 +284,7 @@ class _Buttons extends StatelessWidget {
     this.page1,
     this.page2,
     this.onSubmit,
+    this.decoration = const KeyboardDecoration(),
   }) : super(key: key);
 
   /// The editing controller for the math field that the variables are connected
@@ -298,6 +301,9 @@ class _Buttons extends StatelessWidget {
   ///
   /// Can be `null`.
   final VoidCallback? onSubmit;
+
+  /// keyboard decoration
+  final KeyboardDecoration decoration;
 
   @override
   Widget build(BuildContext context) {
@@ -320,54 +326,54 @@ class _Buttons extends StatelessWidget {
                             flex: config.flex,
                             label: config.label,
                             onTap: config.args != null
-                                ? () =>
-                                controller.addFunction(
-                                  config.value,
-                                  config.args!,
-                                )
+                                ? () => controller.addFunction(
+                                      config.value,
+                                      config.args!,
+                                    )
                                 : () => controller.addLeaf(config.value),
                             asTex: config.asTex,
                             highlightLevel: config.highlighted ? 1 : 0,
+                            decoration: decoration,
                           )
-                        else
-                          if (config is DeleteButtonConfig)
-                            _NavigationButton(
-                              flex: config.flex,
-                              icon: Icons.backspace,
-                              iconSize: 22,
-                              onTap: () => controller.goBack(deleteMode: true),
-                            )
-                          else
-                            if (config is PageButtonConfig)
-                              _BasicButton(
-                                flex: config.flex,
-                                icon: controller.secondPage ? null : CustomKeyIcons.key_symbols,
-                                label: controller.secondPage ? '123' : null,
-                                onTap: controller.togglePage,
-                                highlightLevel: 1,
-                              )
-                            else
-                              if (config is PreviousButtonConfig)
-                                _NavigationButton(
-                                  flex: config.flex,
-                                  icon: Icons.chevron_left_rounded,
-                                  onTap: controller.goBack,
-                                )
-                              else
-                                if (config is NextButtonConfig)
-                                  _NavigationButton(
-                                    flex: config.flex,
-                                    icon: Icons.chevron_right_rounded,
-                                    onTap: controller.goNext,
-                                  )
-                                else
-                                  if (config is SubmitButtonConfig)
-                                    _BasicButton(
-                                      flex: config.flex,
-                                      icon: Icons.keyboard_return,
-                                      onTap: onSubmit,
-                                      highlightLevel: 2,
-                                    ),
+                        else if (config is DeleteButtonConfig)
+                          _NavigationButton(
+                            flex: config.flex,
+                            icon: Icons.backspace,
+                            iconSize: 22,
+                            onTap: () => controller.goBack(deleteMode: true),
+                            decoration: decoration,
+                          )
+                        else if (config is PageButtonConfig)
+                          _BasicButton(
+                            flex: config.flex,
+                            icon: controller.secondPage ? null : CustomKeyIcons.key_symbols,
+                            label: controller.secondPage ? '123' : null,
+                            onTap: controller.togglePage,
+                            highlightLevel: 1,
+                            decoration: decoration,
+                          )
+                        else if (config is PreviousButtonConfig)
+                          _NavigationButton(
+                            flex: config.flex,
+                            icon: Icons.chevron_left_rounded,
+                            onTap: controller.goBack,
+                            decoration: decoration,
+                          )
+                        else if (config is NextButtonConfig)
+                          _NavigationButton(
+                            flex: config.flex,
+                            icon: Icons.chevron_right_rounded,
+                            onTap: controller.goNext,
+                            decoration: decoration,
+                          )
+                        else if (config is SubmitButtonConfig)
+                          _BasicButton(
+                            flex: config.flex,
+                            icon: Icons.keyboard_return,
+                            onTap: onSubmit,
+                            highlightLevel: 2,
+                            decoration: decoration,
+                          ),
                     ],
                   ),
                 ),
@@ -380,7 +386,7 @@ class _Buttons extends StatelessWidget {
 }
 
 /// Widget displaying a single keyboard button.
-class _BasicButton extends StatelessWidget {
+class _BasicButton extends ThemedButton {
   /// Constructs a [_BasicButton].
   const _BasicButton({
     Key? key,
@@ -390,8 +396,8 @@ class _BasicButton extends StatelessWidget {
     this.onTap,
     this.asTex = false,
     this.highlightLevel = 0,
-  })
-      : assert(label != null || icon != null),
+    super.decoration
+  })  : assert(label != null || icon != null),
         super(key: key);
 
   /// The flexible flex value.
@@ -418,14 +424,14 @@ class _BasicButton extends StatelessWidget {
     if (label == null) {
       result = Icon(
         icon,
-        color: Colors.white,
+        color: decoration.basicButtonTextColor,
       );
     } else if (asTex) {
       result = Math.tex(
         label!,
         options: MathOptions(
           fontSize: 22,
-          color: Colors.white,
+          color: decoration.basicButtonTextColor,
         ),
       );
     } else {
@@ -438,9 +444,9 @@ class _BasicButton extends StatelessWidget {
 
       result = Text(
         symbol!,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 22,
-          color: Colors.white,
+          color: decoration.basicButtonTextColor,
         ),
       );
     }
@@ -448,13 +454,10 @@ class _BasicButton extends StatelessWidget {
     result = KeyboardButton(
       onTap: onTap,
       color: highlightLevel > 1
-          ? Theme
-          .of(context)
-          .colorScheme
-          .secondary
+          ? Theme.of(context).colorScheme.secondary
           : highlightLevel == 1
-          ? Colors.grey[900]
-          : null,
+              ? decoration.basicButtonColor
+              : null,
       child: result,
     );
 
@@ -466,7 +469,7 @@ class _BasicButton extends StatelessWidget {
 }
 
 /// Keyboard button for navigation actions.
-class _NavigationButton extends StatelessWidget {
+class _NavigationButton extends ThemedButton {
   /// Constructs a [_NavigationButton].
   const _NavigationButton({
     Key? key,
@@ -474,6 +477,7 @@ class _NavigationButton extends StatelessWidget {
     this.icon,
     this.iconSize = 36,
     this.onTap,
+    super.decoration
   }) : super(key: key);
 
   /// The flexible flex value.
@@ -495,10 +499,10 @@ class _NavigationButton extends StatelessWidget {
       child: KeyboardButton(
         onTap: onTap,
         onHold: onTap,
-        color: Colors.grey[900],
+        color: decoration.functionButtonColor,
         child: Icon(
           icon,
-          color: Colors.white,
+          color: decoration.functionButtonTextColor,
           size: iconSize,
         ),
       ),
@@ -534,4 +538,11 @@ class _VariableButton extends StatelessWidget {
       ),
     );
   }
+}
+
+abstract class ThemedButton extends StatelessWidget {
+  /// keyboard decoration
+  final KeyboardDecoration decoration;
+
+  const ThemedButton({this.decoration = const KeyboardDecoration(), super.key});
 }

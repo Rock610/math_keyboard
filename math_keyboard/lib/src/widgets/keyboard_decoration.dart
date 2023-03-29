@@ -5,11 +5,15 @@ class KeyboardDecoration {
 
   final Color basicButtonTextColor;
   final Color functionButtonTextColor;
+  final Color functionButtonColor;
+  final Color basicButtonColor;
 
   /// themes
   const KeyboardDecoration(
       {this.backgroundColor = Colors.black,
+      this.basicButtonColor = Colors.black,
+      this.functionButtonColor = const Color(0xFF212121),
       this.basicButtonTextColor = Colors.white,
-      this.functionButtonTextColor = const Color(0xFF212121)})
+      this.functionButtonTextColor = Colors.white})
       : super();
 }
